@@ -19,6 +19,11 @@ cc_library_static {
     host_supported: true,
     export_include_dirs: ["include"],
     sdk_version: "9",
+    target: {
+        windows: {
+            enabled: true,
+        },
+    },
 }
 
 //##############################################
@@ -35,10 +40,10 @@ cc_library_static {
         "src/dsp/cost.c",
         "src/dsp/cost_mips32.c",
         "src/dsp/cost_mips_dsp_r2.c",
+        "src/dsp/cost_neon.c",
         "src/dsp/cost_sse2.c",
         "src/dsp/cpu.c",
         "src/dsp/enc.c",
-        "src/dsp/enc_avx2.c",
         "src/dsp/enc_mips32.c",
         "src/dsp/enc_mips_dsp_r2.c",
         "src/dsp/enc_msa.c",
@@ -99,6 +104,7 @@ cc_library_static {
             instruction_set: "arm",
         },
     },
+
     cflags: [
         "-O2",
         "-DANDROID",
@@ -112,6 +118,12 @@ cc_library_static {
     export_static_lib_headers: ["webp-headers"],
 
     sdk_version: "9",
+
+    target: {
+        windows: {
+            enabled: true,
+        },
+    },
 }
 
 //##############################################
@@ -188,6 +200,7 @@ cc_library_static {
             instruction_set: "arm",
         },
     },
+
     cflags: [
         "-O2",
         "-DANDROID",
@@ -201,4 +214,10 @@ cc_library_static {
     export_static_lib_headers: ["webp-headers"],
 
     sdk_version: "9",
+
+    target: {
+        windows: {
+            enabled: true,
+        },
+    },
 }
