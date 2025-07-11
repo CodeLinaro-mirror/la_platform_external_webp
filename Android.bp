@@ -56,12 +56,23 @@ cc_library_static {
 
 //##############################################
 
+libwebp_x86_cflags = [
+    "-DWEBP_HAVE_AVX2",
+]
+libwebp_x86_64_cflags = libwebp_x86_cflags
+
 cc_defaults {
     name: "libwebp_defaults",
 
     arch: {
         arm: {
             instruction_set: "arm",
+        },
+        x86: {
+            cflags: libwebp_x86_cflags,
+        },
+        x86_64: {
+            cflags: libwebp_x86_64_cflags,
         },
     },
 
@@ -83,6 +94,33 @@ cc_defaults {
     target: {
         windows: {
             enabled: true,
+        },
+    },
+}
+
+libwebp_encode_avx2_srcs = [
+    "src/dsp/lossless_enc_avx2.c",
+]
+
+cc_library_static {
+    name: "libwebp-encode-avx2",
+    defaults: ["libwebp_defaults"],
+    host_supported: true,
+    visibility: ["//visibility:private"],
+
+    cflags: [
+        "-Xclang -target-feature",
+        // This comment prevents bpfmt from sorting the flags incorrectly.
+        "-Xclang +avx2",
+    ],
+
+    arch: {
+        x86: {
+            srcs: libwebp_encode_avx2_srcs,
+        },
+
+        x86_64: {
+            srcs: libwebp_encode_avx2_srcs,
         },
     },
 }
@@ -153,10 +191,51 @@ cc_library_static {
         "src/utils/quant_levels_utils.c",
     ],
 
+    arch: {
+        x86: {
+            whole_static_libs: [
+                "libwebp-encode-avx2",
+            ],
+        },
+
+        x86_64: {
+            whole_static_libs: [
+                "libwebp-encode-avx2",
+            ],
+        },
+    },
+
     export_static_lib_headers: ["webp-headers"],
 }
 
 //##############################################
+
+libwebp_decode_avx2_srcs = [
+    "src/dsp/lossless_avx2.c",
+]
+
+cc_library_static {
+    name: "libwebp-decode-avx2",
+    defaults: ["libwebp_defaults"],
+    host_supported: true,
+    visibility: ["//visibility:private"],
+
+    cflags: [
+        "-Xclang -target-feature",
+        // This comment prevents bpfmt from sorting the flags incorrectly.
+        "-Xclang +avx2",
+    ],
+
+    arch: {
+        x86: {
+            srcs: libwebp_decode_avx2_srcs,
+        },
+
+        x86_64: {
+            srcs: libwebp_decode_avx2_srcs,
+        },
+    },
+}
 
 cc_library_static {
     name: "libwebp-decode",
@@ -229,6 +308,20 @@ cc_library_static {
         "src/utils/thread_utils.c",
         "src/utils/utils.c",
     ],
+
+    arch: {
+        x86: {
+            whole_static_libs: [
+                "libwebp-decode-avx2",
+            ],
+        },
+
+        x86_64: {
+            whole_static_libs: [
+                "libwebp-decode-avx2",
+            ],
+        },
+    },
 
     export_static_lib_headers: ["webp-headers"],
 }
