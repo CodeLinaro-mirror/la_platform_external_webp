@@ -56,8 +56,40 @@ cc_library_static {
 
 //##############################################
 
+cc_defaults {
+    name: "libwebp_defaults",
+
+    arch: {
+        arm: {
+            instruction_set: "arm",
+        },
+    },
+
+    cflags: [
+        "-DANDROID",
+        "-DWEBP_SWAP_16BIT_CSP",
+        "-DWEBP_USE_THREAD",
+        "-O2",
+        "-Wall",
+        "-Werror",
+    ],
+
+    local_include_dirs: ["."],
+
+    sdk_version: "9",
+
+    static_libs: ["webp-headers"],
+
+    target: {
+        windows: {
+            enabled: true,
+        },
+    },
+}
+
 cc_library_static {
     name: "libwebp-encode",
+    defaults: ["libwebp_defaults"],
     host_supported: true,
     srcs: [
         "sharpyuv/sharpyuv.c",
@@ -121,38 +153,14 @@ cc_library_static {
         "src/utils/quant_levels_utils.c",
     ],
 
-    arch: {
-        arm: {
-            instruction_set: "arm",
-        },
-    },
-
-    cflags: [
-        "-DANDROID",
-        "-DWEBP_SWAP_16BIT_CSP",
-        "-DWEBP_USE_THREAD",
-        "-O2",
-        "-Wall",
-        "-Werror",
-    ],
-
-    local_include_dirs: ["."],
-    static_libs: ["webp-headers"],
     export_static_lib_headers: ["webp-headers"],
-
-    sdk_version: "9",
-
-    target: {
-        windows: {
-            enabled: true,
-        },
-    },
 }
 
 //##############################################
 
 cc_library_static {
     name: "libwebp-decode",
+    defaults: ["libwebp_defaults"],
     host_supported: true,
     srcs: [
         "src/dec/alpha_dec.c",
@@ -222,30 +230,5 @@ cc_library_static {
         "src/utils/utils.c",
     ],
 
-    arch: {
-        arm: {
-            instruction_set: "arm",
-        },
-    },
-
-    cflags: [
-        "-DANDROID",
-        "-DWEBP_SWAP_16BIT_CSP",
-        "-DWEBP_USE_THREAD",
-        "-O2",
-        "-Wall",
-        "-Werror",
-    ],
-
-    local_include_dirs: ["."],
-    static_libs: ["webp-headers"],
     export_static_lib_headers: ["webp-headers"],
-
-    sdk_version: "9",
-
-    target: {
-        windows: {
-            enabled: true,
-        },
-    },
 }
