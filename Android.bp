@@ -58,6 +58,7 @@ cc_library_static {
 
 libwebp_x86_cflags = [
     "-DWEBP_HAVE_AVX2",
+    "-DWEBP_HAVE_SSE41",
 ]
 libwebp_x86_64_cflags = libwebp_x86_cflags
 
@@ -125,6 +126,34 @@ cc_library_static {
     },
 }
 
+libwebp_encode_sse41_srcs = [
+    "src/dsp/enc_sse41.c",
+    "src/dsp/lossless_enc_sse41.c",
+]
+
+cc_library_static {
+    name: "libwebp-encode-sse41",
+    defaults: ["libwebp_defaults"],
+    host_supported: true,
+    visibility: ["//visibility:private"],
+
+    cflags: [
+        "-Xclang -target-feature",
+        // This comment prevents bpfmt from sorting the flags incorrectly.
+        "-Xclang +sse4.1",
+    ],
+
+    arch: {
+        x86: {
+            srcs: libwebp_encode_sse41_srcs,
+        },
+
+        x86_64: {
+            srcs: libwebp_encode_sse41_srcs,
+        },
+    },
+}
+
 cc_library_static {
     name: "libwebp-encode",
     defaults: ["libwebp_defaults"],
@@ -149,14 +178,12 @@ cc_library_static {
         "src/dsp/enc_msa.c",
         "src/dsp/enc_neon.c",
         "src/dsp/enc_sse2.c",
-        "src/dsp/enc_sse41.c",
         "src/dsp/lossless_enc.c",
         "src/dsp/lossless_enc_mips32.c",
         "src/dsp/lossless_enc_mips_dsp_r2.c",
         "src/dsp/lossless_enc_msa.c",
         "src/dsp/lossless_enc_neon.c",
         "src/dsp/lossless_enc_sse2.c",
-        "src/dsp/lossless_enc_sse41.c",
         "src/dsp/ssim.c",
         "src/dsp/ssim_sse2.c",
         "src/enc/alpha_enc.c",
@@ -195,12 +222,14 @@ cc_library_static {
         x86: {
             whole_static_libs: [
                 "libwebp-encode-avx2",
+                "libwebp-encode-sse41",
             ],
         },
 
         x86_64: {
             whole_static_libs: [
                 "libwebp-encode-avx2",
+                "libwebp-encode-sse41",
             ],
         },
     },
@@ -237,6 +266,37 @@ cc_library_static {
     },
 }
 
+libwebp_decode_sse41_srcs = [
+    "src/dsp/alpha_processing_sse41.c",
+    "src/dsp/dec_sse41.c",
+    "src/dsp/lossless_sse41.c",
+    "src/dsp/upsampling_sse41.c",
+    "src/dsp/yuv_sse41.c",
+]
+
+cc_library_static {
+    name: "libwebp-decode-sse41",
+    defaults: ["libwebp_defaults"],
+    host_supported: true,
+    visibility: ["//visibility:private"],
+
+    cflags: [
+        "-Xclang -target-feature",
+        // This comment prevents bpfmt from sorting the flags incorrectly.
+        "-Xclang +sse4.1",
+    ],
+
+    arch: {
+        x86: {
+            srcs: libwebp_decode_sse41_srcs,
+        },
+
+        x86_64: {
+            srcs: libwebp_decode_sse41_srcs,
+        },
+    },
+}
+
 cc_library_static {
     name: "libwebp-decode",
     defaults: ["libwebp_defaults"],
@@ -258,7 +318,6 @@ cc_library_static {
         "src/dsp/alpha_processing_mips_dsp_r2.c",
         "src/dsp/alpha_processing_neon.c",
         "src/dsp/alpha_processing_sse2.c",
-        "src/dsp/alpha_processing_sse41.c",
         "src/dsp/cpu.c",
         "src/dsp/dec.c",
         "src/dsp/dec_clip_tables.c",
@@ -267,7 +326,6 @@ cc_library_static {
         "src/dsp/dec_msa.c",
         "src/dsp/dec_neon.c",
         "src/dsp/dec_sse2.c",
-        "src/dsp/dec_sse41.c",
         "src/dsp/filters.c",
         "src/dsp/filters_mips_dsp_r2.c",
         "src/dsp/filters_msa.c",
@@ -278,7 +336,6 @@ cc_library_static {
         "src/dsp/lossless_msa.c",
         "src/dsp/lossless_neon.c",
         "src/dsp/lossless_sse2.c",
-        "src/dsp/lossless_sse41.c",
         "src/dsp/rescaler.c",
         "src/dsp/rescaler_mips32.c",
         "src/dsp/rescaler_mips_dsp_r2.c",
@@ -290,13 +347,11 @@ cc_library_static {
         "src/dsp/upsampling_msa.c",
         "src/dsp/upsampling_neon.c",
         "src/dsp/upsampling_sse2.c",
-        "src/dsp/upsampling_sse41.c",
         "src/dsp/yuv.c",
         "src/dsp/yuv_mips32.c",
         "src/dsp/yuv_mips_dsp_r2.c",
         "src/dsp/yuv_neon.c",
         "src/dsp/yuv_sse2.c",
-        "src/dsp/yuv_sse41.c",
         "src/utils/bit_reader_utils.c",
         "src/utils/color_cache_utils.c",
         "src/utils/filters_utils.c",
@@ -313,12 +368,14 @@ cc_library_static {
         x86: {
             whole_static_libs: [
                 "libwebp-decode-avx2",
+                "libwebp-decode-sse41",
             ],
         },
 
         x86_64: {
             whole_static_libs: [
                 "libwebp-decode-avx2",
+                "libwebp-decode-sse41",
             ],
         },
     },
