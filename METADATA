@@ -14,7 +14,7 @@ third_party {
   identifier {
     type: "Git"
     value: "https://chromium.googlesource.com/webm/libwebp"
-    version: "b7e29b9d75bd31422b00c2a446d49d7af06c328d"
+    version: "4fa21912338357f89e4fd51cf2368325b59e9bd9"
     closest_version: "v1.6.0"
   }
 }
